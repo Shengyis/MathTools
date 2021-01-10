@@ -7,4 +7,4 @@ C++ math tools
   
 - Optimization
   - LMA
-    - Levenberg Marquardt algorithm, solving nonlinear least sqaures problem. 
+    - Levenberg Marquardt algorithm, solving nonlinear least squares problem. 
