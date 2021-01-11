@@ -1,3 +1,5 @@
+// function wrappers. 
+// default to use eigen for vectors/matrix calculation. If other matrix class is used, for example Armadillo, please implement all wrapper functions.
 #pragma once
 #ifdef USE_EIGEN
 #include <eigen3/Eigen/Dense>
