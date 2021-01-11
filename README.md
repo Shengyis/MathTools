@@ -1,5 +1,5 @@
 # MathTools
-C++ math tools
+C++ math tools. Eigen is used for vectors, matrix related calculation.
 
 - RootFinding
   - Newton
