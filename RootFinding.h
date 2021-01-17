@@ -4,11 +4,16 @@
 
 namespace mathtool
 {
-    template <typename F, typename DF, typename Tx, typename Te, typename... Args>
-    std::tuple<Te, Tx> Newton(F f, DF df, Tx x0, const Te &tor, const Args... args)
+    template <typename T, typename scalar = typename Type<T>::scalar, typename... Args>
+    std::tuple<scalar, T> Newton(
+        typename FuncType<T, Args...>::crT2T f,
+        typename FuncType<T, Args...>::dcrT2T df,
+        T x0,
+        const scalar &tor,
+        const Args... args)
     {
-        Te err;
-        Tx p;
+        scalar err;
+        T p;
         do
         {
             p = linearSolve(df(x0, args...), f(x0, args...));
