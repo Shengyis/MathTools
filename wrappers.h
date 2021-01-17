@@ -1,51 +1,75 @@
 // function wrappers.
 // default to use eigen for vectors/matrix calculation. If other matrix class is used, for example Armadillo, please implement all wrapper functions.
 #pragma once
-#ifdef USE_EIGEN
-#include <eigen3/Eigen/Dense>
-#endif
+#include <cmath>
+#include "type.h"
 
 namespace mathtool
 {
     template <typename T>
-    auto norm(const T &x)
-    {
-        return std::fabs(x);
-    }
+    typename std::enable_if<std::is_floating_point<T>::value, typename Type<T>::scalar>::type
+    norm(const T &x) { return std::fabs(x); }
 
     template <typename T>
-    T linearSolve(const T &A, const T &b)
-    {
-        return b / A;
-    }
+    typename std::enable_if<std::is_integral<T>::value || is_complex<T>::value, typename Type<T>::scalar>::type
+    norm(const T &x) { return std::abs(x); }
+
+    template <typename TA, typename Tb>
+    typename std::enable_if<is_numeric<TA>::value, Tb>::type
+    linearSolve(const TA &A, const Tb &b) { return b / A; }
 
     template <typename T>
-    auto norm(const Eigen::MatrixBase<T> &x)
-    {
-        return x.norm();
-    }
+    typename std::enable_if<is_numeric<T>::value, int>::type
+    size(const T &x) { return 1; }
 
     template <typename T>
-    auto transpose(const Eigen::MatrixBase<T> &x)
-    {
-        return x.transpose();
-    }
-
-    template <typename T>
-    auto operator%(const Eigen::MatrixBase<T> &x, const Eigen::MatrixBase<T> &y)
-    {
-        return x.cwiseProduct(y);
-    }
-
-    template <typename T>
-    auto operator/(const Eigen::MatrixBase<T> &x, const Eigen::MatrixBase<T> &y)
-    {
-        return x.cwiseQuotient(y);
-    }
-
-    template <typename T>
-    Eigen::Vector<T, -1> linearSolve(const Eigen::Matrix<T, -1, -1> &A, const Eigen::Vector<T, -1> &b)
-    {
-        return A.colPivHouseholderQr().solve(b);
-    }
+    typename std::enable_if<is_numeric<T>::value, T>::type
+    identity(const int &r, const int &i) { return T(1); }
 }; // namespace mathtool
+
+#ifdef USE_OTHER_MATRIX_LIB
+#else
+namespace mathtool
+{
+    template <typename T>
+    typename std::enable_if<is_matrix_related<T>::value, typename Type<T>::scalar>::type
+    norm(const T &x) { return x.norm(); }
+
+    template <typename TA, typename Tb>
+    Tb
+    linearSolve(const Eigen::MatrixBase<TA> &A, const Eigen::MatrixBase<Tb> &b) { return A.colPivHouseholderQr().solve(b); }
+
+    template <typename T>
+    auto
+    transpose(const Eigen::DenseBase<T> &x) { return x.transpose(); }
+
+    template <typename T>
+    auto
+    size(const Eigen::EigenBase<T> &x) { return x.size(); }
+
+    template <typename T>
+    typename std::enable_if<is_matrix_related<T>::value, T>::type
+    identity(const int &r, const int &c) { return T::Identity(r, c); }
+
+    template <typename T>
+    auto
+    operator+(const typename Type<T>::scalar &s, const Eigen::MatrixBase<T> &x) { return (s + x.array()).matrix(); }
+
+    template <typename T>
+    auto
+    operator+(const Eigen::MatrixBase<T> &x, const typename Type<T>::scalar &s) { return (s + x.array()).matrix(); }
+
+    template <typename rhs, typename lhs>
+    auto
+    operator%(const Eigen::MatrixBase<rhs> &R, const Eigen::MatrixBase<lhs> &L) { return R.cwiseProduct(L); }
+
+    template <typename rhs, typename lhs>
+    auto
+    operator/(const Eigen::MatrixBase<rhs> &R, const Eigen::MatrixBase<lhs> &L) { return R.cwiseQuotient(L); }
+
+    template <typename T>
+    auto
+    operator/(const typename Type<T>::scalar &s, const Eigen::MatrixBase<T> &x) {return (s / x.array()).matrix(); }
+
+}; // namespace mathtool
+#endif
