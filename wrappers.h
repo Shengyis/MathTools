@@ -52,24 +52,7 @@ namespace mathtool
     identity(const int &r, const int &c) { return T::Identity(r, c); }
 
     template <typename T>
-    auto
-    operator+(const typename Type<T>::scalar &s, const Eigen::MatrixBase<T> &x) { return (s + x.array()).matrix(); }
-
-    template <typename T>
-    auto
-    operator+(const Eigen::MatrixBase<T> &x, const typename Type<T>::scalar &s) { return (s + x.array()).matrix(); }
-
-    template <typename rhs, typename lhs>
-    auto
-    operator%(const Eigen::MatrixBase<rhs> &R, const Eigen::MatrixBase<lhs> &L) { return R.cwiseProduct(L); }
-
-    template <typename rhs, typename lhs>
-    auto
-    operator/(const Eigen::MatrixBase<rhs> &R, const Eigen::MatrixBase<lhs> &L) { return R.cwiseQuotient(L); }
-
-    template <typename T>
-    auto
-    operator/(const typename Type<T>::scalar &s, const Eigen::MatrixBase<T> &x) {return (s / x.array()).matrix(); }
-
+    typename Type<T>::scalar
+    det(const Eigen::MatrixBase<T> &x) { return x.determinant(); }
 }; // namespace mathtool
 #endif
