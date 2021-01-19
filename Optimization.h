@@ -43,8 +43,9 @@ namespace mathtool
             }
             else
             {
+                A -= mu * I;
                 mu *= 2.0 - a;
-                A += (1.0 - a) / (2.0 - a) * I;
+                A += mu * I;
             }
         } while (err > tor);
         return std::make_tuple(res0, x0);
