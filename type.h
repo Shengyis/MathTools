@@ -102,7 +102,7 @@ namespace mathtool
 #ifdef USE_OTHER_MATRIX_LIB
 #else
 #include <filesystem>
-//#define EIGEN_MATRIXBASE_PLUGIN radd <Mathtools/MatrixBaseAddons.h>
+#define EIGEN_MATRIXBASE_PLUGIN <MathTools/MatrixBaseAddons.h>
 #include <eigen3/Eigen/Dense>
 namespace mathtool
 {
