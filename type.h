@@ -3,6 +3,7 @@
 #include <complex>
 
 using namespace std::complex_literals;
+typedef std::complex<double> cd;
 
 // declaration part
 namespace mathtool
@@ -101,7 +102,6 @@ namespace mathtool
 
 #ifdef USE_OTHER_MATRIX_LIB
 #else
-#include <filesystem>
 #define EIGEN_MATRIXBASE_PLUGIN <MathTools/MatrixBaseAddons.h>
 #include <eigen3/Eigen/Dense>
 namespace mathtool
@@ -148,7 +148,9 @@ namespace mathtool
     template <typename T, typename... Args>
     struct FuncType
     {
-        typedef T (*crT2T)(const T &, Args...);
-        typedef typename Type<T>::derivative (*dcrT2T)(const T &, Args...);
+        typedef void (*rT2rT_inplace)(T &, T &, Args&&...);
+        typedef T (*crT2T)(const T &, Args&&...);
+        typedef void (*drT2rT_inplace)(T &, typename Type<T>::derivative &, Args&&...);
+        typedef typename Type<T>::derivative (*dcrT2T)(const T &, Args&&...);
     };
 }; // namespace mathtool
