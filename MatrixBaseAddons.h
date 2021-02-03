@@ -26,8 +26,27 @@ template <typename OtherDerived>
 Derived &
 operator/=(const MatrixBase<OtherDerived> &mat)
 {
+    static_assert(rows() == mat.rows() && cols() == mat.cols(), "both sides should have the same size.");
     *this = *this / mat;
     return derived();
+}
+
+friend const CwiseUnaryOp<internal::scalar_cos_op<Scalar>, const Derived>
+cos(const MatrixBase<Derived> &mat)
+{
+    return  CwiseUnaryOp<internal::scalar_cos_op<Scalar>, const Derived>(mat.derived());
+}
+
+friend const CwiseUnaryOp<internal::scalar_sin_op<Scalar>, const Derived>
+sin(const MatrixBase<Derived> &mat)
+{
+    return  CwiseUnaryOp<internal::scalar_sin_op<Scalar>, const Derived>(mat.derived());
+}
+
+friend const CwiseUnaryOp<internal::scalar_tan_op<Scalar>, const Derived>
+tan(const MatrixBase<Derived> &mat)
+{
+    return  CwiseUnaryOp<internal::scalar_tan_op<Scalar>, const Derived>(mat.derived());
 }
 
 friend const CwiseBinaryOp<internal::scalar_sum_op<Scalar>, const Derived, const ConstantReturnType>
