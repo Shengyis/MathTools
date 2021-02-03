@@ -5,7 +5,7 @@
 namespace mathtool
 {
     template <typename T, typename scalar = typename Type<T>::scalar, typename... Args>
-    std::tuple<scalar, T> LMA(
+    inline std::tuple<scalar, T> LMA(
         typename FuncType<T, Args...>::crT2T f,
         typename FuncType<T, Args...>::dcrT2T df,
         T x0,
