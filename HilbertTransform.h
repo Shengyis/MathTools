@@ -17,6 +17,10 @@ namespace mathtool
 
     struct Hilbert_plan
     {
+        // FFT plans
+        fftw_plan fft;
+        fftw_plan ifft_p;
+        fftw_plan ifft_m;
         // for FFT variables setting
         int n;
         vec_d f;
@@ -25,16 +29,6 @@ namespace mathtool
         vec_cd Fm; // Fm(f)
         vec_cd Mp;
         vec_cd Mm;
-        double *f_fftw;
-        fftw_complex *F_fftw;
-        fftw_complex *Fp_fftw;
-        fftw_complex *Fm_fftw;
-        fftw_complex *Mp_fftw;
-        fftw_complex *Mm_fftw;
-        // FFT plans
-        fftw_plan fft;
-        fftw_plan ifft_p;
-        fftw_plan ifft_m;
         cd &v; // v = Mp.coeffRef(0)
         Hilbert_plan(const int &n)
             : n(n),
@@ -44,23 +38,11 @@ namespace mathtool
               Fm(Eigen::VectorXcd::Zero(n)),
               Mp(Eigen::VectorXcd::Zero(n)),
               Mm(Eigen::VectorXcd::Zero(n)),
-              f_fftw(f.data()),
-              F_fftw(reinterpret_cast<fftw_complex *>(F.data())),
-              Fp_fftw(reinterpret_cast<fftw_complex *>(Fp.data())),
-              Fm_fftw(reinterpret_cast<fftw_complex *>(Fm.data())),
-              Mp_fftw(reinterpret_cast<fftw_complex *>(Mp.data())),
-              Mm_fftw(reinterpret_cast<fftw_complex *>(Mm.data())),
               v(Mp.coeffRef(0))
         {
-            fft = fftw_plan_dft_r2c_1d(n, f_fftw, F_fftw, FFTW_MEASURE);
-            ifft_p = fftw_plan_dft_1d(n, Fp_fftw, Mp_fftw, 1, FFTW_MEASURE);
-            ifft_m = fftw_plan_dft_1d(n, Fm_fftw, Mm_fftw, 1, FFTW_MEASURE);
-        }
-        ~Hilbert_plan()
-        {
-            fftw_destroy_plan(fft);
-            fftw_destroy_plan(ifft_p);
-            fftw_destroy_plan(ifft_m);
+            fft = fftw_plan_dft_r2c_1d(n, f.data(), reinterpret_cast<fftw_complex *>(F.data()), FFTW_MEASURE);
+            ifft_p = fftw_plan_dft_1d(n, reinterpret_cast<fftw_complex *>(Fp.data()), reinterpret_cast<fftw_complex *>(Mp.data()), 1, FFTW_MEASURE);
+            ifft_m = fftw_plan_dft_1d(n, reinterpret_cast<fftw_complex *>(Fm.data()), reinterpret_cast<fftw_complex *>(Mm.data()), 1, FFTW_MEASURE);
         }
     };
 
@@ -71,14 +53,16 @@ namespace mathtool
 
     inline void Hilbert_destory(Hilbert_plan &plan)
     {
-        plan.~Hilbert_plan();
+        fftw_destroy_plan(plan.fft);
+        fftw_destroy_plan(plan.ifft_p);
+        fftw_destroy_plan(plan.ifft_m);
     }
 
     inline void Hilbert_r2r_inplace(const vec_d &in, vec_d &out, Hilbert_plan &plan)
     {
         plan.Fp.setZero();
         plan.Fm.setZero();
-        fftw_execute_dft_r2c(plan.fft, (double *)in.data(), plan.F_fftw);
+        fftw_execute_dft_r2c(plan.fft, (double *)in.data(), reinterpret_cast<fftw_complex *>(plan.F.data()));
         plan.Fp.head(plan.n / 2) = plan.F.head(plan.n / 2);
         plan.Fm.tail(plan.n / 2) = plan.F.segment(1, plan.n / 2).reverse().conjugate();
         fftw_execute(plan.ifft_p);
