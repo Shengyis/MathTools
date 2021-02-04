@@ -12,8 +12,7 @@ namespace mathtool
     // the program requires f(+- infity) = 0, input function data is f(x(:)) as a vector.
     // the basic data type is double
 
-    typedef typename ToVec<double>::type vec_d;
-    typedef typename ToVec<cd>::type vec_cd;
+    
 
     struct Hilbert_plan
     {
@@ -30,7 +29,7 @@ namespace mathtool
         vec_cd Mp;
         vec_cd Mm;
         cd &v; // v = Mp.coeffRef(0)
-        Hilbert_plan(const int &n)
+        inline Hilbert_plan(const int &n)
             : n(n),
               f(Eigen::VectorXd::Zero(n)),
               F(Eigen::VectorXcd::Zero(n)),
