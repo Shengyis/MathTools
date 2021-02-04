@@ -145,12 +145,15 @@ namespace mathtool
 
 namespace mathtool
 {
+    typedef typename ToVec<double>::type vec_d;
+    typedef typename ToVec<cd>::type vec_cd;
+
     template <typename T, typename... Args>
     struct FuncType
     {
-        typedef void (*rT2rT_inplace)(T &, T &, Args&&...);
-        typedef T (*crT2T)(const T &, Args&&...);
-        typedef void (*drT2rT_inplace)(T &, typename Type<T>::derivative &, Args&&...);
-        typedef typename Type<T>::derivative (*dcrT2T)(const T &, Args&&...);
+        typedef void (*rT2rT_inplace)(T &, T &, Args &&...);
+        typedef T (*crT2T)(const T &, Args &&...);
+        typedef void (*drT2rT_inplace)(T &, typename Type<T>::derivative &, Args &&...);
+        typedef typename Type<T>::derivative (*dcrT2T)(const T &, Args &&...);
     };
 }; // namespace mathtool
