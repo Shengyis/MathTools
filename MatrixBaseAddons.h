@@ -63,6 +63,12 @@ log10(const MatrixBase<Derived> &mat)
     return  CwiseUnaryOp<internal::scalar_log10_op<Scalar>, const Derived>(mat.derived());
 }
 
+friend const CwiseUnaryOp<internal::scalar_sqrt_op<Scalar>, const Derived>
+sqrt(const MatrixBase<Derived> &mat)
+{
+    return  CwiseUnaryOp<internal::scalar_sqrt_op<Scalar>, const Derived>(mat.derived());
+}
+
 friend const CwiseUnaryOp<internal::scalar_cos_op<Scalar>, const Derived>
 cos(const MatrixBase<Derived> &mat)
 {
