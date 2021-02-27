@@ -138,7 +138,7 @@ namespace mathtool
     template <typename T>
     struct ToVec
     {
-        typedef typename Eigen::Matrix<typename Type<T>::scalar, 1, -1> type;
+        typedef typename Eigen::Matrix<typename Type<T>::scalar, -1, 1> type;
     };
 }; // namespace mathtool
 #endif
