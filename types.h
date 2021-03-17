@@ -187,7 +187,7 @@ namespace boost
                 inline mathtool::mp_f pi_half_lower<mathtool::mp_f>() { return mathtool::mp_pi / 2; }
                 template <>
                 inline mathtool::mp_f pi_half_upper<mathtool::mp_f>() { return mathtool::mp_pi / 2; }
-            }
-        }
-    }
-}
+            };
+        };
+    };
+};
