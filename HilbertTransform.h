@@ -38,7 +38,7 @@ namespace mathtool
         Fm.head(n / 2).setZero();
         FFTP::fft.inv(Mp, Fp);
         FFTP::fft.inv(Mm, Fm);
-        out = (-1.0i * (Mp - Mm - 2.0 * Mp(0))).real();
+        out = (-1i * (Mp - Mm - Mp(0) - Mp(0))).real();
     }
 
     template <typename T>
