@@ -24,4 +24,18 @@ namespace mathtool
         anti_derivative_inplace(in, out, x);
         return out;
     }
+
+    // calculate integratoin: int_a^b f(x) dx
+    // input function is f(x(:)) as a vector
+    // input x is nodes in [a, b] as a vector, where x(0) = a, x(end) = b.
+
+    template <typename T1, typename T2>
+    inline typename Type<T1>::scalar integrate(const Eigen::MatrixBase<T1> &in, const Eigen::MatrixBase<T2> &x)
+    {
+        typename Type<T1>::scalar out;
+        out = 0.0;
+        for (int k = 1; k < x.size(); ++k)
+            out += (in(k) + in(k-1)) / 2 * (x(k) - x(k-1));
+        return out;
+    }
 };

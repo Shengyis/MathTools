@@ -51,6 +51,12 @@ abs(const MatrixBase<Derived> &mat)
     return  CwiseUnaryOp<internal::scalar_abs_op<Scalar>, const Derived>(mat.derived());
 }
 
+friend const CwiseUnaryOp<internal::scalar_exp_op<Scalar>, const Derived>
+exp(const MatrixBase<Derived> &mat)
+{
+    return  CwiseUnaryOp<internal::scalar_exp_op<Scalar>, const Derived>(mat.derived());
+}
+
 friend const CwiseUnaryOp<internal::scalar_log_op<Scalar>, const Derived>
 log(const MatrixBase<Derived> &mat)
 {

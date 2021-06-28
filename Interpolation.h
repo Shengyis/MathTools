@@ -1,14 +1,17 @@
 #pragma once
 #include "types.h"
+#include <vector>
 #include <boost/math/interpolators/cardinal_cubic_b_spline.hpp>
 #include <boost/math/interpolators/barycentric_rational.hpp>
+#include <boost/math/interpolators/makima.hpp>
 
 namespace mathtool
 {
     enum interp_method
     {
         cubic,
-        rational
+        rational,
+        makima
     };
 
     template <interp_method method, typename real>
@@ -38,6 +41,20 @@ namespace mathtool
                              real right_endpoint_derivative = std::numeric_limits<real>::quiet_NaN())
         {
             return boost::math::barycentric_rational<real>(x.data(), y.data(), x.size());
+        }
+    };
+
+    template <typename real>
+    struct InterpMethod<makima, real>
+    {
+        typedef boost::math::interpolators::makima<std::vector<real>> plan_type;
+        static auto get_plan(const typename Type<real>::vec &x, const typename Type<real>::vec &y,
+                             real left_endpoint_derivative = std::numeric_limits<real>::quiet_NaN(),
+                             real right_endpoint_derivative = std::numeric_limits<real>::quiet_NaN())
+        {
+            return boost::math::interpolators::makima<std::vector<real>>(std::vector<real>(x.data(), x.data() + x.size()),
+                                                                         std::vector<real>(y.data(), y.data() + y.size()),
+                                                                         left_endpoint_derivative, right_endpoint_derivative);
         }
     };
 
