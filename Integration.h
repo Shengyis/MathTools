@@ -40,7 +40,7 @@ namespace mathtool
     inline typename Type<T1>::vec anti_derivative_reverse(const Eigen::MatrixBase<T1>& in, const Eigen::MatrixBase<T2>& x)
     {
         typename Type<T1>::vec out(x.size());
-        anti_derivative_inplace(in, out, x);
+        anti_derivative_reverse_inplace(in, out, x);
         return out;
     }
 
