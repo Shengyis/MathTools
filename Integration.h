@@ -32,7 +32,7 @@ namespace mathtool
     inline void anti_derivative_reverse_inplace(const Eigen::MatrixBase<T1>& in, Eigen::MatrixBase<T2>& out, const Eigen::MatrixBase<T3>& x)
     {
         out.tail(1).setZero();
-        for (int k = x.size() - 2; k < -1; --k)
+        for (int k = x.size() - 2; k > -1; --k)
             out(k) = out(k + 1) + (in(k) + in(k + 1)) / 2 * (x(k + 1) - x(k));
     }
 
