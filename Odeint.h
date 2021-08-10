@@ -38,10 +38,16 @@ namespace mathtool
             vec yt(y0.size());
             while (t(Nt - 1) < t_end)
             {
+                if (dt < 1e-7)
+                {
+                    std::cout << "min time step 1e-7 is reached, system may blow up" << std::endl;
+                    break;
+                }
                 one_step(dt, t(Nt - 1), TE, Y(Nt - 1), yt, f);
                 if (TE > tor)
                 {
                     dt = 0.9 * dt * pow(tor / TE, 0.2);
+                    std::cout << "t = " << t(Nt - 1) << ". current try fails, new dt = " << dt << std::endl;
                 }
                 else
                 {
@@ -55,6 +61,7 @@ namespace mathtool
                     t(Nt - 1) = t(Nt - 2) + dt;
                     Y(Nt - 1) = yt;
                     dt = 0.9 * dt * pow(tor / TE, 0.2);
+                    std::cout << "t = " << t(Nt - 1) << ". current try accepts, next dt = " << dt << std::endl;
                 }
             }
             t.conservativeResize(Nt);
