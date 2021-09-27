@@ -6,7 +6,8 @@ namespace mathtool
 {
     typedef Eigen::Matrix<vec, -1, 1> vec_vec;
 
-    class rk45 {
+    class rk45 
+    {
     public:
         static const vec A, C, CH, CT;
         static const mat B;
