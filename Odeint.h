@@ -6,14 +6,15 @@ namespace mathtool
 {
     typedef Eigen::Matrix<vec, -1, 1> vec_vec;
 
+    template <class T>
     class rk45 
     {
     public:
         static const vec A, C, CH, CT;
         static const mat B;
-        static vec k0, k1, k2, k3, k4, k5;
+        static T k0, k1, k2, k3, k4, k5;
 
-        template <class ODEFun, typename T>
+        template <class ODEFun>
         static void one_step(double& dt, double& t, double& TE, T& in, T& out, ODEFun& f)
         {
             k0 = dt * f(t + A(0) * dt, in);
@@ -26,7 +27,7 @@ namespace mathtool
             TE = (CT(0) * k0 + CT(1) * k1 + CT(2) * k2 + CT(3) * k3 + CT(4) * k4 + CT(5) * k5).norm();
         }
 
-        template <class ODEFun, typename T>
+        template <class ODEFun>
         static auto solve(double dt, double t0, double t_end, T& y0, ODEFun& f, double tor = 1e-8)
         {
             Eigen::Matrix<T, -1, 1> Y(10);
@@ -71,16 +72,26 @@ namespace mathtool
             return sol;
         }
     };
-    const vec rk45::A = (vec(6) << 0, 2.0 / 9.0, 1.0 / 3.0, 3.0 / 4.0, 1.0, 5.0 / 6.0).finished();
-    const mat rk45::B = (mat(6, 5)
+    template <class T>
+    const vec rk45<T>::A = (vec(6) << 0, 2.0 / 9.0, 1.0 / 3.0, 3.0 / 4.0, 1.0, 5.0 / 6.0).finished();
+    template <class T>
+    const mat rk45<T>::B = (mat(6, 5)
         << 0, 0, 0, 0, 0,
         2.0 / 9.0, 0, 0, 0, 0,
         1.0 / 12.0, 1.0 / 4.0, 0, 0, 0,
         69.0 / 128, -243.0 / 128.0, 135.0 / 64, 0, 0,
         -17.0 / 12.0, 27.0 / 4.0, -27.0 / 5.0, 16.0 / 15.0, 0,
         65.0 / 432.0, -5.0 / 16.0, 13.0 / 16.0, 4.0 / 27.0, 5.0 / 144.0).finished();
-    const vec rk45::C = (vec(5) << 1.0 / 9.0, 0, 9.0 / 20.0, 16.0 / 45.0, 1.0 / 12.0).finished();
-    const vec rk45::CH = (vec(6) << 47.0 / 450.0, 0, 12.0 / 25.0, 32.0 / 225.0, 1.0 / 30.0, 6.0 / 25.0).finished();
-    const vec rk45::CT = (vec(6) << -1.0 / 150.0, 0, 3.0 / 100, -16.0 / 75.0, -1.0 / 20.0, 6.0 / 25.0).finished();
-    vec rk45::k0, rk45::k1, rk45::k2, rk45::k3, rk45::k4, rk45::k5;
+    template <class T>
+    const vec rk45<T>::C = (vec(5) << 1.0 / 9.0, 0, 9.0 / 20.0, 16.0 / 45.0, 1.0 / 12.0).finished();
+    template <class T>
+    const vec rk45<T>::CH = (vec(6) << 47.0 / 450.0, 0, 12.0 / 25.0, 32.0 / 225.0, 1.0 / 30.0, 6.0 / 25.0).finished();
+    template <class T>
+    const vec rk45<T>::CT = (vec(6) << -1.0 / 150.0, 0, 3.0 / 100, -16.0 / 75.0, -1.0 / 20.0, 6.0 / 25.0).finished();
+    template <class T> T rk45<T>::k0;
+    template <class T> T rk45<T>::k1;
+    template <class T> T rk45<T>::k2;
+    template <class T> T rk45<T>::k3;
+    template <class T> T rk45<T>::k4;
+    template <class T> T rk45<T>::k5;
 };
