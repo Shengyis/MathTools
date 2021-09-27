@@ -12,8 +12,8 @@ namespace mathtool
         static const mat B;
         static vec k0, k1, k2, k3, k4, k5;
 
-        template <class ODEFun>
-        static void one_step(double& dt, double& t, double& TE, vec& in, vec& out, ODEFun& f)
+        template <class ODEFun, typename T>
+        static void one_step(double& dt, double& t, double& TE, T& in, T& out, ODEFun& f)
         {
             k0 = dt * f(t + A(0) * dt, in);
             k1 = dt * f(t + A(1) * dt, in + B(1, 0) * k0);
@@ -25,17 +25,17 @@ namespace mathtool
             TE = (CT(0) * k0 + CT(1) * k1 + CT(2) * k2 + CT(3) * k3 + CT(4) * k4 + CT(5) * k5).norm();
         }
 
-        template <class ODEFun>
-        static auto solve(double dt, double t0, double t_end, vec& y0, ODEFun& f, double tor = 1e-8)
+        template <class ODEFun, typename T>
+        static auto solve(double dt, double t0, double t_end, T& y0, ODEFun& f, double tor = 1e-8)
         {
-            vec_vec Y(10);
+            Eigen::Matrix<T, -1, 1> Y(10);
             vec t(10);
             int size = 10;
             int Nt = 1;
             Y(0) = y0;
             t(0) = t0;
             double TE = 0;
-            vec yt(y0.size());
+            T yt = y0;
             while (t(Nt - 1) < t_end)
             {
                 if (dt < 1e-7)
