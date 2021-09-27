@@ -1,15 +1,16 @@
 #pragma once
-#include <type_traits>
-#include <boost/multiprecision/cpp_dec_float.hpp>
-#include <boost/numeric/interval.hpp>
 #ifndef EIGEN_MATRIXBASE_PLUGIN
 #define EIGEN_MATRIXBASE_PLUGIN <MathTools/MatrixBaseAddons.h>
 #endif
-#include <eigen3/Eigen/Eigen>
 
 #ifndef PREC
 #define PREC 128
 #endif
+
+#include <type_traits>
+#include <boost/multiprecision/cpp_dec_float.hpp>
+#include <boost/numeric/interval.hpp>
+#include <eigen3/Eigen/Eigen>
 
 using namespace std::complex_literals;
 
