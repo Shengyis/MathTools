@@ -71,6 +71,52 @@ namespace mathtool
             auto sol = std::make_tuple(t, Y);
             return sol;
         }
+
+        template <class ODEFun>
+        static auto solve(double dt, double t0, double t_end, vec& t, T& y0, ODEFun& f, double tor = 1e-8)
+        {
+            int Nt = t.size();
+            Eigen::Matrix<T, -1, 1> Y(Nt);
+            int size = 10;
+            Y(0) = y0;
+            t(0) = t0;
+            double TE = 0;
+            double time = t0;
+            double tmp_time = t0;
+            T yc = y0;
+            T yt = y0;
+            int ind = 1;
+            while (time < t_end)
+            {
+                if (dt < 1e-7)
+                {
+                    std::cout << "min time step 1e-7 is reached, system may blow up" << std::endl;
+                    break;
+                }
+                one_step(dt, time, TE, yc, yt, f);
+                if (TE > tor)
+                {
+                    dt = 0.9 * dt * pow(tor / TE, 0.2);
+                    std::cout << "t = " << time << ". current try fails, new dt = " << dt << std::endl;
+                }
+                else
+                {
+                    yc = yt;
+                    tmp_time = time;
+                    time += dt;
+                    if (t(ind) < time)
+                    {
+                        t(ind) = time;
+                        Y(ind) = yc;
+                        ++ind;
+                    }
+                    dt = 0.9 * dt * pow(tor / TE, 0.2);
+                    std::cout << "t = " << tmp_time << ". current try accepts, next dt = " << dt << std::endl;
+                }
+            }
+            auto sol = std::make_tuple(t, Y);
+            return sol;
+        }
     };
     template <class T>
     const vec rk45<T>::A = (vec(6) << 0, 2.0 / 9.0, 1.0 / 3.0, 3.0 / 4.0, 1.0, 5.0 / 6.0).finished();
