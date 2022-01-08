@@ -82,7 +82,6 @@ namespace mathtool
             t(0) = t0;
             double TE = 0;
             double time = t0;
-            double tmp_time = t0;
             T yc = y0;
             T yt = y0;
             int ind = 1;
@@ -101,17 +100,22 @@ namespace mathtool
                 }
                 else
                 {
-                    yc = yt;
-                    tmp_time = time;
+                    std::cout << "t = " << time;
                     time += dt;
+                    dt = 0.9 * dt * pow(tor / TE, 0.2);
                     if (t(ind) < time)
                     {
-                        t(ind) = time;
-                        Y(ind) = yc;
+                        time -= dt;
+                        dt = t(ind) - time;
+                        one_step(dt, time, TE, yc, yt, f);
+                        time = t(ind);
+                        Y(ind) = yt;
+                        //t(ind) = time;
+                        //Y(ind) = yc;
                         ++ind;
                     }
-                    dt = 0.9 * dt * pow(tor / TE, 0.2);
-                    std::cout << "t = " << tmp_time << ". current try accepts, next dt = " << dt << std::endl;
+                    yc = yt;
+                    std::cout << ". current try accepts, next dt = " << dt << std::endl;
                 }
             }
             auto sol = std::make_tuple(t, Y);
