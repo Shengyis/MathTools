@@ -40,9 +40,9 @@ namespace mathtool
             T yt = y0;
             while (t(Nt - 1) < t_end)
             {
-                if (dt < 1e-7)
+                if (dt < 1e-12)
                 {
-                    std::cout << "min time step 1e-7 is reached, system may blow up" << std::endl;
+                    std::cout << "min time step 1e-12 is reached, system may blow up" << std::endl;
                     break;
                 }
                 one_step(dt, t(Nt - 1), TE, Y(Nt - 1), yt, f);
@@ -87,9 +87,9 @@ namespace mathtool
             int ind = 1;
             while (time < t_end)
             {
-                if (dt < 1e-7)
+                if (dt < 1e-12)
                 {
-                    std::cout << "min time step 1e-7 is reached, system may blow up" << std::endl;
+                    std::cout << "min time step 1e-12 is reached, system may blow up" << std::endl;
                     break;
                 }
                 one_step(dt, time, TE, yc, yt, f);
