@@ -5,9 +5,10 @@
 template <typename Tx, typename Ty>
 auto meshgrid(const Eigen::MatrixBase<Tx>& x, const Eigen::MatrixBase<Ty>& y)
 {
+    typedef typename mathtool::Type<Tx>::mat M;
     int cols = x.size();
     int rows = y.size();
-    Eigen::MatrixXd X(rows, cols), Y(rows, cols);
+    M X(rows, cols), Y(rows, cols);
     for (int k = 0; k < rows; ++k)
         X.row(k) = x.transpose();
     for (int k = 0; k < cols; ++k)
