@@ -1,6 +1,6 @@
 #pragma once
 #include "types.h"
-#include <eigen3/unsupported/Eigen/FFT>
+#include "fft_helper.h"
 
 namespace mathtool
 {
@@ -10,15 +10,6 @@ namespace mathtool
     // x = tan(theta/2), where theta(k) = -pi + 2*pi/N * k, N is the total number of nodes.
     // the program requires f(+- infity) = 0, input function data is f(x(:)) as a vector.
     // support multiprecision number
-    
-    template <typename T>
-    struct FFT_PLAN
-    {
-        static Eigen::FFT<typename Type<T>::real_scalar> fft;
-    };
-
-    template <typename T>
-    Eigen::FFT<typename Type<T>::real_scalar> FFT_PLAN<T>::fft;
 
     template <typename T1, typename T2>
     inline void hilbert_r2r_inplace(const Eigen::MatrixBase<T1> &in, Eigen::MatrixBase<T2> &out)
@@ -42,7 +33,7 @@ namespace mathtool
     }
 
     template <typename T>
-    inline typename Type<T>::vec hilbert_r2r(const Eigen::MatrixBase<T> &in)
+    inline auto hilbert_r2r(const Eigen::MatrixBase<T> &in)
     {
         typename Type<T>::vec out(in.size());
         hilbert_r2r_inplace(in, out);
