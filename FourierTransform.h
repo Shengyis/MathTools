@@ -4,47 +4,74 @@
 
 namespace mathtool
 {
-    template <typename T1, typename T2>
-    inline void fft_inplace(const Eigen::MatrixBase<T1>& in, Eigen::MatrixBase<T2>& out)
-    {
-        static_assert(std::is_same<typename Type<T1>::real_scalar, typename Type<T2>::real_scalar>::value == 1, "in and out vec have different base data type.");
-        typedef FFT_PLAN<typename Type<T1>::real_scalar> FFTP;
-        out = FFTP::fft.fwd(in);
-    }
-
     template <typename T>
     inline auto fft(const Eigen::MatrixBase<T>& in)
     {
-        typename Type<T>::vec_c out(in.size());
-        fft_inplace(in, out);
-        return out;
-    }
-
-    template <typename T1, typename T2>
-    inline void ifft_inplace(const Eigen::MatrixBase<T1>& in, Eigen::MatrixBase<T2>& out)
-    {
-        static_assert(std::is_same<typename Type<T1>::real_scalar, typename Type<T2>::real_scalar>::value == 1, "in and out vec have different base data type.");
-        typedef FFT_PLAN<typename Type<T1>::real_scalar> FFTP;
-        out = FFTP::fft.inv(in);
+        typedef FFT_PLAN<typename Type<T>::real_scalar> FFTP;
+        return FFTP::fft.fwd(in);
     }
 
     template <typename T>
-    inline auto ifft_c2r(const Eigen::MatrixBase<T>& in)
+    inline auto ifft(const Eigen::MatrixBase<T>& in)
     {
-        vec out(in.size());
-        ifft_inplace(in, out);
+        typedef FFT_PLAN<typename Type<T>::real_scalar> FFTP;
+        return FFTP::fft.inv(in);
+    }
+
+    template <typename T>
+    inline auto fft2(const Eigen::MatrixBase<T>& in)
+    {
+        int N1 = in.rows();
+        int N2 = in.cols();
+        mat_cd tmp(N1, N2), out(N2, N1);
+
+        int k = 0;
+        tmp.col(k) = fft(in.col(k).eval());
+#pragma omp parallel for
+        for (k = 1; k < N2; ++k)
+        {
+            tmp.col(k) = fft(in.col(k).eval());
+        }
+        tmp.transposeInPlace();
+        k = 0;
+        out.col(k) = fft(tmp.col(k).eval());
+#pragma omp parallel for
+        for (k = 1; k < N1; ++k)
+        {
+            out.col(k) = fft(tmp.col(k).eval());
+        }
+        out.transposeInPlace();
         return out;
     }
 
     template <typename T>
-    inline auto ifft_c2c(const Eigen::MatrixBase<T>& in)
+    inline auto ifft2(const Eigen::MatrixBase<T>& in)
     {
-        vec_cd out(in.size());
-        ifft_inplace(in, out);
+        int N1 = in.rows();
+        int N2 = in.cols();
+        mat_cd tmp(N1, N2);
+        mat out(N2, N1);
+
+        int k = 0;
+        tmp.col(k) = ifft(in.col(k).eval());
+#pragma omp parallel for
+        for (k = 1; k < N2; ++k)
+        {
+            tmp.col(k) = ifft(in.col(k).eval());
+        }
+        tmp.transposeInPlace();
+        k = 0;
+        out.col(k) = ifft(tmp.col(k).eval());
+#pragma omp parallel for
+        for (k = 1; k < N1; ++k)
+        {
+            out.col(k) = ifft(tmp.col(k).eval());
+        }
+        out.transposeInPlace();
         return out;
     }
 
-    template <typename T1, typename T2>
+    /* template <typename T1, typename T2>
     inline void fft2_inplace(const Eigen::MatrixBase<T1>& in, Eigen::MatrixBase<T2>& out)
     {
         static_assert(std::is_same<typename Type<T1>::real_scalar, typename Type<T2>::real_scalar>::value == 1, "in and out data have different base data type.");
@@ -129,5 +156,5 @@ namespace mathtool
         mat_cd out(in.rows(), in.cols());
         ifft2_inplace(in, out);
         return out;
-    }
+    } */
 };
