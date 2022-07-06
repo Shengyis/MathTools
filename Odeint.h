@@ -7,7 +7,7 @@ namespace mathtool
     typedef Eigen::Matrix<vec, -1, 1> vec_vec;
 
     template <class T>
-    class rk45 
+    class rk45
     {
     public:
         static const vec A, C, CH, CT;
@@ -120,6 +120,58 @@ namespace mathtool
             }
             auto sol = std::make_tuple(t, Y);
             return sol;
+        }
+
+        template <class ODEFun>
+        static auto solve_fix_dt(double dt, double t0, double t_end, T& y0, ODEFun& f)
+        {
+            Eigen::Matrix<T, -1, 1> Y(10);
+            vec t(10);
+            int size = 10;
+            int Nt = 1;
+            Y(0) = y0;
+            t(0) = t0;
+            T yt = y0;
+            double TE = 0;
+            while (t(Nt - 1) < t_end)
+            {
+                one_step(dt, t(Nt - 1), TE, Y(Nt - 1), yt, f);
+                ++Nt;
+                if (size < Nt)
+                {
+                    size *= 2;
+                    t.conservativeResize(size);
+                    Y.conservativeResize(size);
+                }
+                t(Nt - 1) = t(Nt - 2) + dt;
+                Y(Nt - 1) = yt;
+                std::cout << "t = " << t(Nt - 1) << std::endl;
+            }
+            t.conservativeResize(Nt);
+            Y.conservativeResize(Nt);
+            auto sol = std::make_tuple(t, Y);
+            return sol;
+        }
+
+        template <class ODEFun>
+        static auto solve_at_t_fix_dt(double dt, double t0, double t_end, T& y0, ODEFun& f)
+        {
+            T ynow, yt;
+            double t;
+            int size = 10;
+            int Nt = 1;
+            ynow = y0;
+            yt = y0;
+            t = t0;
+            double TE = 0;
+            while (t < t_end)
+            {
+                one_step(dt, t, TE, ynow, yt, f);
+                t += dt;
+                ynow = yt;
+                std::cout << "t = " << t << std::endl;
+            }
+            return yt;
         }
     };
     template <class T>

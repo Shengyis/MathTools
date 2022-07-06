@@ -35,12 +35,12 @@ namespace mathtool
     template <typename real>
     struct InterpMethod<rational, real>
     {
-        typedef boost::math::barycentric_rational<real> plan_type;
+        typedef boost::math::interpolators::barycentric_rational<real> plan_type;
         static auto get_plan(const typename Type<real>::vec &x, const typename Type<real>::vec &y,
                              real left_endpoint_derivative = std::numeric_limits<real>::quiet_NaN(),
                              real right_endpoint_derivative = std::numeric_limits<real>::quiet_NaN())
         {
-            return boost::math::barycentric_rational<real>(x.data(), y.data(), x.size());
+            return boost::math::interpolators::barycentric_rational<real>(x.data(), y.data(), x.size());
         }
     };
 
